@@ -1,0 +1,33 @@
+{
+  "verifyConditions": ["@semantic-release/github"],
+  "addChannel": ["@semantic-release/github"],
+  "prepare": [
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "docker build -t smartive/kustomize ."
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "prepareCmd": "docker tag smartive/kustomize:latest smartive/kustomize:${nextRelease.version}"
+      }
+    ]
+  ],
+  "publish": [
+    [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "docker push smartive/kustomize:latest"
+      }
+    ],
+    [
+      "@semantic-release/exec",
+      {
+        "publishCmd": "docker push smartive/kustomize:${nextRelease.version}"
+      }
+    ],
+    ["@semantic-release/github"]
+  ]
+}

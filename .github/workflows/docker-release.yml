@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - 'master'
+  schedule:
+    - cron: '0 1 * * *'
 
 jobs:
-  semantic-release:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -18,10 +20,11 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
         run: docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-      - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v2
-        with:
-          extra_plugins: |
-            @semantic-release/exec
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and Release Image
+        shell: bash
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\/v//g')
+          docker build -t smartive/kustomize:latest .
+          docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
+          docker push smartive/kustomize:latest
+          docker push smartive/kustomize:$VERSION

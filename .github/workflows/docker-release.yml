@@ -23,7 +23,9 @@ jobs:
       - name: Build and Release Image
         shell: bash
         run: |
-          VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\/v//g')
+          KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\///g')
+          KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+          VERSION="kustomize-$KUSTOMIZE_VERSION_kubectl-$KUBECTL_VERSION"
           docker build -t smartive/kustomize:latest .
           docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
           docker push smartive/kustomize:latest

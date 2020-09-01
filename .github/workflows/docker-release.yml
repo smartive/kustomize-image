@@ -26,7 +26,7 @@ jobs:
           set -x
           KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\///g')
 
-          if [ -z "$KUSTOMIZE_VERSION" ]
+          if [[ -z "$KUSTOMIZE_VERSION" ]]
           then
             echo "no new kustomize version."
             exit 0

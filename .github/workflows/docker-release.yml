@@ -26,17 +26,20 @@ jobs:
           set -x
           KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\///g')
 
-          if [[ -z "$KUSTOMIZE_VERSION" ]]
+          echo "k ver="
+          echo $KUSTOMIZE_VERSION
+
+          if [ -z "$KUSTOMIZE_VERSION" ]
           then
             echo "no new kustomize version."
             exit 0
-          else
-            echo "NEW kustomize version."
-            
-            KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-            VERSION="kustomize-${KUSTOMIZE_VERSION}_kubectl-${KUBECTL_VERSION}"
-            docker build -t smartive/kustomize:latest .
-            docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
-            docker push smartive/kustomize:latest
-            docker push smartive/kustomize:$VERSION
           fi
+
+          echo "NEW kustomize version."
+
+          KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+          VERSION="kustomize-${KUSTOMIZE_VERSION}_kubectl-${KUBECTL_VERSION}"
+          docker build -t smartive/kustomize:latest .
+          docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
+          docker push smartive/kustomize:latest
+          docker push smartive/kustomize:$VERSION

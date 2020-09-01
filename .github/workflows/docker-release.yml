@@ -28,12 +28,8 @@ jobs:
           echo "$CURL"
           GREP=$(grep '"name": "kustomize/v' <<< "$CURL")
           echo $GREP
-          CUT=$(cut -d '"' -f 4 <<< "$GREP")
-          echo $CUT
-          SED=$(sed 's/kustomize\///g' <<< "$CUT")
-          echo $SED
 
-          if [ -z "$SED" ]
+          if [ -z "$GREP" ]
           then
             echo "no new kustomize version."
             exit 0
@@ -41,6 +37,10 @@ jobs:
 
           echo "NEW kustomize version."
 
+          CUT=$(cut -d '"' -f 4 <<< "$GREP")
+          echo $CUT
+          KUSTOMIZE_VERSION=$(sed 's/kustomize\///g' <<< "$CUT")
+          echo KUSTOMIZE_VERSION
           KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
           VERSION="kustomize-${KUSTOMIZE_VERSION}_kubectl-${KUBECTL_VERSION}"
           docker build -t smartive/kustomize:latest .

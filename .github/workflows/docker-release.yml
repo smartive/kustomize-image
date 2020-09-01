@@ -3,7 +3,7 @@ name: Docker Release
 on:
   push:
     branches:
-      - 'master'
+      - 'test'
   schedule:
     - cron: '0 1 * * *'
 
@@ -30,11 +30,13 @@ jobs:
           then
             echo "no new kustomize version."
             exit 0
+          else
+            echo "NEW kustomize version."
+            
+            KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
+            VERSION="kustomize-${KUSTOMIZE_VERSION}_kubectl-${KUBECTL_VERSION}"
+            docker build -t smartive/kustomize:latest .
+            docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
+            docker push smartive/kustomize:latest
+            docker push smartive/kustomize:$VERSION
           fi
-
-          KUBECTL_VERSION=$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)
-          VERSION="kustomize-${KUSTOMIZE_VERSION}_kubectl-${KUBECTL_VERSION}"
-          docker build -t smartive/kustomize:latest .
-          docker tag smartive/kustomize:latest smartive/kustomize:$VERSION
-          docker push smartive/kustomize:latest
-          docker push smartive/kustomize:$VERSION

@@ -24,12 +24,16 @@ jobs:
         shell: bash
         run: |
           set -x
-          KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\///g')
+          CURL=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest)
+          echo "$CURL"
+          GREP=$(grep '"name": "kustomize/v' <<< "$CURL")
+          echo $GREP
+          CUT=$(cut -d '"' -f 4 <<< "$GREP")
+          echo $CUT
+          SED=$(sed 's/kustomize\///g' <<< "$CUT")
+          echo $SED
 
-          echo "k ver="
-          echo $KUSTOMIZE_VERSION
-
-          if [ -z "$KUSTOMIZE_VERSION" ]
+          if [ -z "$SED" ]
           then
             echo "no new kustomize version."
             exit 0

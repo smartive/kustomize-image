@@ -24,7 +24,7 @@ jobs:
         shell: bash
         run: |
           set -x
-          KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest | grep '"name": "kustomize/v' | cut -d '"' -f 4 | sed 's/kustomize\///g')
+          KUSTOMIZE_VERSION=$(curl -s https://api.github.com/repos/kubernetes-sigs/kustomize/releases | grep '"name": "kustomize/v' | head -1 | cut -d '"' -f 4 | sed 's/kustomize\///g')
 
           if [ -z "$KUSTOMIZE_VERSION" ]
           then
